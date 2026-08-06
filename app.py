@@ -106,11 +106,11 @@ def preprocess_image(image_bytes):
 
 # 5 avocado ripeness classes
 CLASSES = [
-    {"name": "Unripe", "desc": "Firm and bright green. Not ready to eat yet.", "color": "#8D6E63"},
-    {"name": "Ripening", "desc": "Slightly soft, transitioning from green.", "color": "#4CAF50"},
-    {"name": "Perfect", "desc": "Ideal texture and color. Ready to enjoy!", "color": "#66BB6A"},
-    {"name": "Overripe", "desc": "Very soft, may have brown spots inside.", "color": "#9CCC65"},
-    {"name": "Rotten", "desc": "Dark spots, mushy texture. Discard.", "color": "#795548"},
+    {"name": "Underripe", "desc": "Firm and bright green. Not ready to eat yet.", "color": "#8D6E63"},
+    {"name": "Breaking", "desc": "Starting to soften, transitioning from green.", "color": "#4CAF50"},
+    {"name": "Ripe (First Stage)", "desc": "Slightly soft, beginning to yield. Good for cooking.", "color": "#66BB6A"},
+    {"name": "Ripe (Second Stage)", "desc": "Perfectly soft and creamy. Ideal for eating!", "color": "#43A047"},
+    {"name": "Overripe", "desc": "Very soft, may have brown spots inside. Use soon.", "color": "#9CCC65"},
 ]
 
 
