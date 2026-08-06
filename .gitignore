@@ -13,3 +13,5 @@ local.properties
 __pycache__/
 venv/
 .env
+assets/
+*.onnx
