@@ -1,4 +1,4 @@
-const SERVER_URL = "http://10.0.2.2:5000/predict_base64";
+const SERVER_URL = "https://avocado-api.onrender.com/predict_base64";
 
 export async function runPrediction(
   imageBase64: string,
