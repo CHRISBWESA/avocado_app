@@ -16,7 +16,8 @@ export default function LiveDemo() {
 
     const reader = new FileReader();
     reader.onload = async (e) => {
-      const base64 = e.target?.result as string;
+      const dataUrl = e.target?.result as string;
+      const base64 = dataUrl.split(',')[1];
       try {
         const res = await fetch('https://avocado-app-1.onrender.com/predict_base64', {
           method: 'POST',

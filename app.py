@@ -259,7 +259,10 @@ def predict_base64():
         }), 400
 
     try:
-        image_bytes = base64.b64decode(data["image_base64"])
+        image_base64 = data["image_base64"]
+        if "," in image_base64:
+            image_base64 = image_base64.split(",")[1]
+        image_bytes = base64.b64decode(image_base64)
         processed_image = preprocess_image(image_bytes)
 
         outputs = session.run(
