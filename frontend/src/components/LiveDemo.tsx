@@ -135,9 +135,9 @@ export default function LiveDemo() {
                       </div>
                     </div>
                     <div className="glass rounded-2xl p-4">
-                      <div className="text-xs text-[#81c784] mb-1">Quality</div>
+                      <div className="text-xs text-[#81c784] mb-1">Confidence</div>
                       <div className="text-2xl font-bold text-[#9CCC65]">
-                        {result.quality || 'N/A'}
+                        {result.confidence || 'N/A'}
                       </div>
                     </div>
                     <div className="glass rounded-2xl p-4 col-span-2">

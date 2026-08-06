@@ -104,6 +104,43 @@ def preprocess_image(image_bytes):
 
 
 
+# 5 avocado ripeness classes
+CLASSES = [
+    {"name": "Unripe", "desc": "Firm and bright green. Not ready to eat yet.", "color": "#8D6E63"},
+    {"name": "Ripening", "desc": "Slightly soft, transitioning from green.", "color": "#4CAF50"},
+    {"name": "Perfect", "desc": "Ideal texture and color. Ready to enjoy!", "color": "#66BB6A"},
+    {"name": "Overripe", "desc": "Very soft, may have brown spots inside.", "color": "#9CCC65"},
+    {"name": "Rotten", "desc": "Dark spots, mushy texture. Discard.", "color": "#795548"},
+]
+
+
+def predict_from_output(outputs):
+    output = outputs[0]
+    if len(output.shape) == 1 or output.shape[1] == 1:
+        confidence_score = float(output[0][0])
+        if confidence_score >= 0.5:
+            idx = 2
+            confidence_percentage = round(confidence_score * 100, 2)
+        else:
+            idx = 0
+            confidence_percentage = round((1 - confidence_score) * 100, 2)
+    else:
+        probs = output[0]
+        idx = int(np.argmax(probs))
+        confidence_percentage = round(float(probs[idx]) * 100, 2)
+
+    cls = CLASSES[idx]
+    return {
+        "status": "success",
+        "ripeness": cls["name"],
+        "quality": cls["name"],
+        "confidence": f"{confidence_percentage}%",
+        "recommendation": cls["desc"],
+        "class_index": idx,
+        "confidence_score": confidence_percentage,
+    }
+
+
 # ===============================
 # HOME PAGE
 # ===============================
@@ -164,69 +201,9 @@ def predict():
             }
         )
 
+        result = predict_from_output(outputs)
 
-        confidence_score = float(
-            outputs[0][0][0]
-        )
-
-
-
-        if confidence_score >= 0.5:
-
-
-            maturity_status = "RIPE"
-
-            description = (
-                "The avocado is perfectly ripe "
-                "and ready for consumption."
-            )
-
-
-            confidence_percentage = round(
-                confidence_score * 100,
-                2
-            )
-
-
-            css_code = "iva"
-
-
-
-        else:
-
-
-            maturity_status = "UNRIPE"
-
-
-            description = (
-                "The avocado is still unripe. "
-                "Allow it to mature before eating."
-            )
-
-
-            confidence_percentage = round(
-                (1 - confidence_score) * 100,
-                2
-            )
-
-
-            css_code = "bichi"
-
-
-
-        return jsonify({
-
-            "status": "success",
-
-            "hali": maturity_status,
-
-            "uhakika": f"{confidence_percentage}%",
-
-            "maelezo": description,
-
-            "code": css_code
-
-        })
+        return jsonify(result)
 
 
 
@@ -272,28 +249,9 @@ def predict_base64():
             }
         )
 
-        confidence_score = float(
-            outputs[0][0][0]
-        )
+        result = predict_from_output(outputs)
 
-        if confidence_score >= 0.5:
-            maturity_status = "RIPE"
-            description = "The avocado is perfectly ripe and ready for consumption."
-            confidence_percentage = round(confidence_score * 100, 2)
-            css_code = "iva"
-        else:
-            maturity_status = "UNRIPE"
-            description = "The avocado is still unripe. Allow it to mature before eating."
-            confidence_percentage = round((1 - confidence_score) * 100, 2)
-            css_code = "bichi"
-
-        return jsonify({
-            "status": "success",
-            "hali": maturity_status,
-            "uhakika": f"{confidence_percentage}%",
-            "maelezo": description,
-            "code": css_code
-        })
+        return jsonify(result)
 
     except Exception as e:
         return jsonify({
