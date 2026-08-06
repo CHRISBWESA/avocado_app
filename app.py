@@ -14,7 +14,7 @@ CORS(app)
 # LOAD ONNX MODEL
 # ===============================
 
-MODEL_PATH = os.path.join(os.path.dirname(__file__), "..", "assets", "models", "model_parachichi.onnx")
+MODEL_PATH = os.path.join(os.path.dirname(__file__), "assets", "models", "model_parachichi.onnx")
 
 print("Loading model from:")
 print(MODEL_PATH)
