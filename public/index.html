@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#0f172a">
+  <meta name="theme-color" content="#0a0a0a">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Avocado AI">
@@ -13,40 +13,103 @@
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <div class="badge">AI Powered</div>
-      <h1>Avocado Intelligence</h1>
-      <p class="subtitle">Check if your avocado is ripe and ready to eat</p>
-    </div>
-
-    <div class="preview-container" id="previewContainer">
-      <div class="placeholder" id="placeholder">
-        <div class="placeholder-icon">🥑</div>
-        <div class="placeholder-text">No image selected</div>
-        <div class="placeholder-hint">Capture or upload a photo to begin</div>
+  <div class="app">
+    <div class="top-bar">
+      <div class="logo">
+        <div class="logo-icon">🥑</div>
+        <span class="logo-text">Avocado AI</span>
       </div>
-      <img class="preview" id="preview" style="display:none" alt="Preview">
+      <button class="guide-btn" id="guideBtn">How to Use</button>
     </div>
 
-    <div class="button-row">
-      <button class="button camera-button" id="cameraBtn">
-        <span class="button-icon">📷</span> Camera
+    <div class="hero">
+      <h1 class="hero-title">Ripe or Not?<br>Let AI decide.</h1>
+      <p class="hero-sub">Snap a photo of your avocado and get instant ripeness analysis</p>
+      <div class="step-dots">
+        <div class="step-dot active" id="dot1"></div>
+        <div class="step-dot" id="dot2"></div>
+        <div class="step-dot" id="dot3"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Photo</div>
+      <div class="preview-area" id="previewArea">
+        <div class="preview-placeholder" id="previewPlaceholder">
+          <div class="preview-placeholder-icon">📷</div>
+          <div class="preview-placeholder-text">No image selected</div>
+        </div>
+        <img class="preview-img" id="previewImg" style="display:none" alt="Preview">
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="action-btn camera" id="cameraBtn">
+        📷 Camera
       </button>
-      <button class="button gallery-button" id="galleryBtn">
-        <span class="button-icon">🖼️</span> Gallery
+      <button class="action-btn gallery" id="galleryBtn">
+        🖼️ Gallery
       </button>
     </div>
 
-    <div class="status-box" id="statusBox" style="display:none">
-      <div class="spinner"></div>
-      <span class="status-text" id="statusText">Analyzing avocado...</span>
+    <div class="actions" id="analyzeRow" style="display:none">
+      <button class="action-btn secondary" id="analyzeBtn">
+        🔍 Analyze
+      </button>
+      <button class="action-btn secondary" id="resetBtn">
+        🔄 Reset
+      </button>
     </div>
 
-    <div class="result-box" id="resultBox" style="display:none"></div>
+    <div class="result-card" id="resultCard" style="display:none"></div>
 
     <div class="footer">Avocado Intelligence PWA</div>
   </div>
+
+  <div class="guide-overlay hidden" id="guideOverlay">
+    <div class="guide-header">
+      <h2>How to Use</h2>
+      <button class="guide-close" id="guideClose">✕</button>
+    </div>
+    <div class="guide-body">
+      <div class="guide-step">
+        <div class="guide-step-num">1</div>
+        <div class="guide-step-content">
+          <h3>Capture or Upload</h3>
+          <p>Take a photo of your avocado using the camera, or choose one from your gallery. Make sure the avocado is clearly visible and well-lit.</p>
+          <div class="tip">💡 Tip: Hold the avocado against a plain background for best results</div>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="guide-step-num">2</div>
+        <div class="guide-step-content">
+          <h3>Tap Analyze</h3>
+          <p>Once your photo is uploaded, tap the "Analyze" button to send the image to our AI model for ripeness detection.</p>
+          <div class="tip">⏳ The analysis takes just a few seconds</div>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="guide-step-num">3</div>
+        <div class="guide-step-content">
+          <h3>Get Your Result</h3>
+          <p>The app will display whether your avocado is RIPE or UNRIPE, along with a confidence percentage. A green badge means it's ready to eat!</p>
+          <div class="tip">🥑 RIPE = ready to eat | UNRIPE = wait a few more days</div>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="guide-step-num">4</div>
+        <div class="guide-step-content">
+          <h3>Try Again</h3>
+          <p>Not happy with the result? Tap "Reset" to take a new photo and try again. You can analyze as many avocados as you want.</p>
+        </div>
+      </div>
+    </div>
+    <div class="guide-footer">
+      <p>Avocado Intelligence v1.0 — Powered by ONNX AI</p>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
 
   <script src="/app.js"></script>
 </body>

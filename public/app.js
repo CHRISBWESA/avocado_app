@@ -1,61 +1,98 @@
 const SERVER_URL = "https://avocado-app-1.onrender.com";
 
-const preview = document.getElementById("preview");
-const previewContainer = document.getElementById("previewContainer");
-const placeholder = document.getElementById("placeholder");
+const previewImg = document.getElementById("previewImg");
+const previewArea = document.getElementById("previewArea");
+const previewPlaceholder = document.getElementById("previewPlaceholder");
 const cameraBtn = document.getElementById("cameraBtn");
 const galleryBtn = document.getElementById("galleryBtn");
-const statusBox = document.getElementById("statusBox");
-const statusText = document.getElementById("statusText");
-const resultBox = document.getElementById("resultBox");
+const analyzeRow = document.getElementById("analyzeRow");
+const analyzeBtn = document.getElementById("analyzeBtn");
+const resetBtn = document.getElementById("resetBtn");
+const resultCard = document.getElementById("resultCard");
+const guideBtn = document.getElementById("guideBtn");
+const guideOverlay = document.getElementById("guideOverlay");
+const guideClose = document.getElementById("guideClose");
+const toast = document.getElementById("toast");
+const dot1 = document.getElementById("dot1");
+const dot2 = document.getElementById("dot2");
+const dot3 = document.getElementById("dot3");
 
 let currentImageBase64 = null;
+let isAnalyzing = false;
+
+function setDots(step) {
+  dot1.classList.toggle("active", step >= 1);
+  dot2.classList.toggle("active", step >= 2);
+  dot3.classList.toggle("active", step >= 3);
+}
+
+function showToast(msg) {
+  toast.textContent = msg;
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 3000);
+}
 
 function showPreview(dataUrl) {
-  preview.src = dataUrl;
-  preview.style.display = "block";
-  placeholder.style.display = "none";
-  previewContainer.classList.add("has-image");
+  previewImg.src = dataUrl;
+  previewImg.style.display = "block";
+  previewPlaceholder.style.display = "none";
+  previewArea.classList.add("has-image");
+  analyzeRow.style.display = "flex";
+  setDots(2);
 }
 
 function hidePreview() {
-  preview.style.display = "none";
-  preview.src = "";
-  placeholder.style.display = "flex";
-  previewContainer.classList.remove("has-image");
+  previewImg.style.display = "none";
+  previewImg.src = "";
+  previewPlaceholder.style.display = "flex";
+  previewArea.classList.remove("has-image");
+  analyzeRow.style.display = "none";
+  setDots(1);
 }
 
-function showStatus(text) {
-  statusBox.style.display = "flex";
-  statusText.textContent = text;
-}
-
-function hideStatus() {
-  statusBox.style.display = "none";
-}
-
-function showResult(result) {
-  resultBox.style.display = "block";
-  const isRipe = result.label === "RIPE";
-  resultBox.className = "result-box " + (isRipe ? "ripe" : "unripe");
-  resultBox.innerHTML = `
-    <div class="result-header">
-      <span class="badge2 ${isRipe ? "badge-ripe" : "badge-unripe"}">${result.label}</span>
-      <span class="confidence">${(result.confidence * 100).toFixed(1)}%</span>
-    </div>
-    <p class="description">${result.label === "RIPE" ? "This avocado is perfectly ripe and ready to enjoy! 🥑" : "This avocado is not yet ripe. Give it a few more days."}</p>
+function showLoading() {
+  resultCard.style.display = "block";
+  resultCard.className = "result-card";
+  resultCard.innerHTML = `
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Analyzing avocado...</div>
   `;
 }
 
-function showError(message) {
-  resultBox.style.display = "block";
-  resultBox.className = "result-box unripe";
-  resultBox.innerHTML = `<div class="error-alert">${message}</div>`;
+function showResult(result) {
+  const isRipe = result.label === "RIPE";
+  resultCard.className = "result-card " + (isRipe ? "ripe" : "unripe");
+  resultCard.innerHTML = `
+    <div class="result-top">
+      <span class="result-label">Detection Result</span>
+      <span class="result-badge ${isRipe ? "badge-ripe" : "badge-unripe"}">${result.label}</span>
+    </div>
+    <div class="result-confidence">${(result.confidence * 100).toFixed(1)}<span>%</span></div>
+    <div class="result-desc">${result.label === "RIPE" ? "This avocado is perfectly ripe and ready to enjoy! 🥑" : "This avocado is not yet ripe. Give it a few more days to mature."}</div>
+  `;
+  setDots(3);
 }
 
-async function sendImage(dataUrl) {
+function showError(message) {
+  resultCard.style.display = "block";
+  resultCard.className = "result-card unripe";
+  resultCard.innerHTML = `
+    <div class="result-top">
+      <span class="result-label">Error</span>
+    </div>
+    <div class="result-desc">${message}</div>
+  `;
+}
+
+async function analyzeImage(dataUrl) {
+  if (isAnalyzing) return;
   const base64 = dataUrl.split(",")[1];
-  showStatus("Sending image for analysis...");
+  if (!base64) {
+    showError("Invalid image data. Please try again.");
+    return;
+  }
+  isAnalyzing = true;
+  showLoading();
   try {
     const res = await fetch(`${SERVER_URL}/predict_base64`, {
       method: "POST",
@@ -64,11 +101,15 @@ async function sendImage(dataUrl) {
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    hideStatus();
-    showResult(data);
+    isAnalyzing = false;
+    if (data.error) {
+      showError(data.error);
+    } else {
+      showResult(data);
+    }
   } catch (err) {
-    hideStatus();
-    showError("Failed to analyze. Check your connection and try again.");
+    isAnalyzing = false;
+    showError("Network error. Check your connection and try again.");
   }
 }
 
@@ -88,24 +129,24 @@ cameraBtn.addEventListener("click", () => {
         canvas.height = video.videoHeight;
         canvas.getContext("2d").drawImage(video, 0, 0);
         stream.getTracks().forEach((t) => t.stop());
-        const dataUrl = canvas.toDataURL("image/jpeg", 0.8);
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
         currentImageBase64 = dataUrl;
         showPreview(dataUrl);
-        sendImage(dataUrl);
+        analyzeImage(dataUrl);
       };
       const overlay = document.createElement("div");
-      overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.9);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1000;";
+      overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.92);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1000;";
       const videoEl = document.createElement("video");
       videoEl.srcObject = stream;
-      videoEl.style.cssText = "width:100%;max-height:60vh;border-radius:12px;";
+      videoEl.style.cssText = "width:100%;max-height:55vh;border-radius:16px;object-fit:cover;";
       videoEl.autoplay = true;
       const btn = document.createElement("button");
       btn.textContent = "📸 Capture";
-      btn.style.cssText = "margin-top:24px;padding:16px 40px;border-radius:30px;border:none;background:#27ae60;color:#fff;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;";
+      btn.style.cssText = "margin-top:28px;padding:16px 48px;border-radius:30px;border:none;background:linear-gradient(135deg,#1a7a3a,#27ae60);color:#fff;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 16px rgba(39,174,96,0.3);";
       btn.addEventListener("click", capture);
       const cancel = document.createElement("button");
       cancel.textContent = "Cancel";
-      cancel.style.cssText = "margin-top:12px;padding:12px 30px;border-radius:30px;border:1px solid rgba(255,255,255,0.2);background:transparent;color:#94a3b8;font-size:14px;cursor:pointer;font-family:inherit;";
+      cancel.style.cssText = "margin-top:14px;padding:12px 32px;border-radius:30px;border:1px solid rgba(255,255,255,0.15);background:transparent;color:#94a3b8;font-size:14px;cursor:pointer;font-family:inherit;";
       cancel.addEventListener("click", () => {
         stream.getTracks().forEach((t) => t.stop());
         overlay.remove();
@@ -129,9 +170,36 @@ galleryBtn.addEventListener("click", () => {
     reader.onload = (ev) => {
       currentImageBase64 = ev.target.result;
       showPreview(ev.target.result);
-      sendImage(ev.target.result);
+      analyzeImage(ev.target.result);
     };
     reader.readAsDataURL(file);
   });
   input.click();
+});
+
+analyzeBtn.addEventListener("click", () => {
+  if (currentImageBase64) {
+    analyzeImage(currentImageBase64);
+  }
+});
+
+resetBtn.addEventListener("click", () => {
+  currentImageBase64 = null;
+  resultCard.style.display = "none";
+  hidePreview();
+  setDots(1);
+});
+
+guideBtn.addEventListener("click", () => {
+  guideOverlay.classList.remove("hidden");
+});
+
+guideClose.addEventListener("click", () => {
+  guideOverlay.classList.add("hidden");
+});
+
+guideOverlay.addEventListener("click", (e) => {
+  if (e.target === guideOverlay) {
+    guideOverlay.classList.add("hidden");
+  }
 });
