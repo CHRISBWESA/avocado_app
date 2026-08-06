@@ -4,26 +4,32 @@ const stages = [
   {
     name: 'Unripe',
     color: '#8D6E63',
-    desc: 'Firm, bright green. Not ready to eat yet.',
+    desc: 'Exhibiting a yellowish-green color and a very firm texture, these avocados may display signs of sun damage or other pre-harvest markings.',
     days: '2-4 days',
   },
   {
-    name: 'Ripening',
+    name: 'Breaking',
     color: '#4CAF50',
-    desc: 'Slightly soft, transitioning from green.',
+    desc: 'Beginning to ripen, the skin darkens to a greyish olive green with brown hues. While still firm, the avocado yields slightly under pressure.',
     days: '1-2 days',
   },
   {
-    name: 'Perfect',
+    name: 'Ripe (First Stage)',
     color: '#66BB6A',
-    desc: 'Ideal texture and color. Ready to enjoy!',
+    desc: 'Marked by the emergence of purple spots on the skin, the texture softens, indicating readiness for slicing while resisting mashing.',
     days: 'Now',
+  },
+  {
+    name: 'Ripe (Second Stage)',
+    color: '#43A047',
+    desc: 'Considered the peak of shelf-life, the skin turns a uniform purple, the flesh is soft to the touch, and the stem appears dry and light brown. There are no significant signs of decay.',
+    days: 'Use soon',
   },
   {
     name: 'Overripe',
     color: '#9CCC65',
-    desc: 'Very soft, may have brown spots inside.',
-    days: 'Use soon',
+    desc: 'The avocados show clear senescence signs, including mold spots on the skin and stem, and separation between the exocarp and mesocarp, indicating they are past their prime.',
+    days: 'Past prime',
   },
 ];
 
@@ -50,7 +56,7 @@ export default function MaturityStages() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
           {stages.map((stage, i) => (
             <motion.div
               key={i}
