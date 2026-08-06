@@ -46,7 +46,7 @@ export default function Navbar() {
             href="#demo"
             className="px-5 py-2.5 rounded-full bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] text-[#0a0f0d] font-semibold text-sm hover:shadow-[0_0_25px_rgba(76,175,80,0.4)] transition-all duration-300"
           >
-            Try It Free
+            Analyze Now
           </a>
         </div>
 
@@ -81,7 +81,7 @@ export default function Navbar() {
               onClick={() => setOpen(false)}
               className="px-5 py-2.5 rounded-full bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] text-[#0a0f0d] font-semibold text-sm text-center"
             >
-              Try It Free
+              Analyze Now
             </a>
           </div>
         </motion.div>

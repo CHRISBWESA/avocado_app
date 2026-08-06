@@ -21,7 +21,7 @@ export default function LiveDemo() {
         const res = await fetch('https://avocado-app-1.onrender.com/predict_base64', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ image: base64 }),
+          body: JSON.stringify({ image_base64: base64 }),
         });
         const data = await res.json();
         setResult(data);

@@ -16,22 +16,26 @@ CORS(app)
 
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "assets", "models", "model_parachichi.onnx")
 
-print("Loading model from:")
-print(MODEL_PATH)
-
+print("=" * 50)
+print("Loading Avocado AI Model...")
+print("Model path:", MODEL_PATH)
 
 if not os.path.exists(MODEL_PATH):
     raise FileNotFoundError(
         f"Model file not found: {MODEL_PATH}"
     )
 
-
 session = ort.InferenceSession(MODEL_PATH)
 
 input_name = session.get_inputs()[0].name
+input_shape = session.get_inputs()[0].shape
+output_name = session.get_outputs()[0].name
 
-print("Model loaded successfully")
+print("Model loaded successfully!")
 print("Input name:", input_name)
+print("Input shape:", input_shape)
+print("Output name:", output_name)
+print("=" * 50)
 
 
 
@@ -58,6 +62,14 @@ def preprocess_image(image_bytes):
         )
 
 
+    # Resize to model input size with high quality interpolation
+    img = cv2.resize(
+        img,
+        (224, 224),
+        interpolation=cv2.INTER_LANCZOS4
+    )
+
+
     # Convert BGR to RGB
     img = cv2.cvtColor(
         img,
@@ -65,17 +77,20 @@ def preprocess_image(image_bytes):
     )
 
 
-    # Resize to model input size
-    img = cv2.resize(
-        img,
-        (224, 224)
-    )
-
-
-    # Normalize pixel values
+    # Normalize pixel values to [0, 1]
     img = img.astype(
         np.float32
     ) / 255.0
+
+
+    # Apply CLAHE for better contrast
+    lab = cv2.cvtColor(
+        (img * 255).astype(np.uint8),
+        cv2.COLOR_RGB2LAB
+    )
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+    lab[:, :, 0] = clahe.apply(lab[:, :, 0])
+    img = cv2.cvtColor(lab, cv2.COLOR_LAB2RGB).astype(np.float32) / 255.0
 
 
     # Add batch dimension
