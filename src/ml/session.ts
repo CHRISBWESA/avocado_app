@@ -1,0 +1,23 @@
+const SERVER_URL = "http://10.0.2.2:5000/predict_base64";
+
+export async function runPrediction(
+  imageBase64: string,
+  mimeType: string,
+): Promise<any> {
+  const response = await fetch(SERVER_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      image: imageBase64,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || "Server error");
+  }
+
+  return response.json();
+}
