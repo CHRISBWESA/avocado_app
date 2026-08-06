@@ -2,51 +2,50 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#1e293b">
-  <title>Avocado Intelligence</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Avocado AI">
   <link rel="manifest" href="/manifest.json">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥑</text></svg>">
+  <link rel="icon" type="image/png" href="/icon-192.png">
+  <title>Avocado Intelligence</title>
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <span class="badge">COMPUTER VISION ENGINE</span>
+      <div class="badge">AI Powered</div>
       <h1>Avocado Intelligence</h1>
-      <p class="subtitle">Upload or capture an image of an avocado to run maturity assessment.</p>
+      <p class="subtitle">Check if your avocado is ripe and ready to eat</p>
     </div>
 
     <div class="preview-container" id="previewContainer">
       <div class="placeholder" id="placeholder">
-        <span class="placeholder-icon">🥑</span>
-        <span class="placeholder-text">Select an image</span>
-        <span class="placeholder-hint">Camera or Gallery</span>
+        <div class="placeholder-icon">🥑</div>
+        <div class="placeholder-text">No image selected</div>
+        <div class="placeholder-hint">Capture or upload a photo to begin</div>
       </div>
-      <img id="preview" class="preview" style="display:none" alt="Preview">
+      <img class="preview" id="preview" style="display:none" alt="Preview">
     </div>
 
     <div class="button-row">
-      <button id="cameraBtn" class="button camera-button">Camera</button>
-      <button id="galleryBtn" class="button gallery-button">Gallery</button>
+      <button class="button camera-button" id="cameraBtn">
+        <span class="button-icon">📷</span> Camera
+      </button>
+      <button class="button gallery-button" id="galleryBtn">
+        <span class="button-icon">🖼️</span> Gallery
+      </button>
     </div>
-
-    <input type="file" id="fileInput" accept="image/*" style="display:none">
 
     <div class="status-box" id="statusBox" style="display:none">
-      <span class="spinner"></span>
-      <span class="status-text">Analyzing avocado...</span>
+      <div class="spinner"></div>
+      <span class="status-text" id="statusText">Analyzing avocado...</span>
     </div>
 
-    <div class="result-box" id="resultBox" style="display:none">
-      <div class="result-header">
-        <span class="badge2" id="resultBadge"></span>
-        <span class="confidence" id="confidence"></span>
-      </div>
-      <p class="description" id="description"></p>
-    </div>
+    <div class="result-box" id="resultBox" style="display:none"></div>
 
-    <p class="footer">Automated Crop Quality Estimation Dashboard</p>
+    <div class="footer">Avocado Intelligence PWA</div>
   </div>
 
   <script src="/app.js"></script>
