@@ -238,13 +238,13 @@ def predict_base64():
 
     data = request.get_json()
 
-    if not data or "image" not in data:
+    if not data or "image_base64" not in data:
         return jsonify({
             "error": "No image data"
         }), 400
 
     try:
-        image_bytes = base64.b64decode(data["image"])
+        image_bytes = base64.b64decode(data["image_base64"])
         processed_image = preprocess_image(image_bytes)
 
         outputs = session.run(
@@ -297,8 +297,4 @@ def catch_all(path):
 
 if __name__ == "__main__":
 
-    app.run(
-        debug=True,
-        host="0.0.0.0",
-        port=5000
-    )
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
