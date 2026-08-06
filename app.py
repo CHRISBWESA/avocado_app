@@ -2,11 +2,11 @@ import os
 import cv2
 import numpy as np
 import onnxruntime as ort
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import base64
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="public", static_url_path="")
 CORS(app)
 
 
@@ -95,10 +95,7 @@ def preprocess_image(image_bytes):
 
 @app.route("/")
 def home():
-
-    return render_template(
-        "index.html"
-    )
+    return send_from_directory("public", "index.html")
 
 
 
@@ -285,6 +282,13 @@ def predict_base64():
             "error": f"Inference failed: {str(e)}"
         }), 500
 
+
+
+@app.route("/<path:path>")
+def catch_all(path):
+    if os.path.exists(os.path.join("public", path)):
+        return send_from_directory("public", path)
+    return send_from_directory("public", "index.html")
 
 
 # ===============================
